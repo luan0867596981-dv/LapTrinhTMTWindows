@@ -1,103 +1,77 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
-class PTBac1
+
+namespace BT02
 {
-    protected double a;
-    protected double b;
-
-    public PTBac1(double a, double b)
+    internal class BT02_01
     {
-        this.a = a;
-        this.b = b;
-    }
 
-    public virtual void Giai()
-    {
-        if (a == 0)
-        {
-            if (b == 0)
-                Console.WriteLine("Phương trình vô số nghiệm.");
-            else
-                Console.WriteLine("Phương trình vô nghiệm.");
-        }
-        else
-        {
-            double x = -b / a;
-            Console.WriteLine("Nghiệm của phương trình là x = " + x);
-        }
     }
 }
 
-class PTBac2 : PTBac1
+public class Student
 {
-    private double c;
-
-    public PTBac2(double a, double b, double c) : base(a, b)
-    {
-        this.c = c;
-    }
-
-    public override void Giai()
-    {
-        if (a == 0)
-        {
-            Console.WriteLine("Vì a = 0 nên phương trình trở thành bậc 1:");
-            base.Giai();
-            return;
-        }
-
-        double delta = b * b - 4 * a * c;
-
-        if (delta < 0)
-        {
-            Console.WriteLine("Phương trình vô nghiệm.");
-        }
-        else if (delta == 0)
-        {
-            double x = -b / (2 * a);
-            Console.WriteLine("Phương trình có nghiệm kép x = " + x);
-        }
-        else
-        {
-            double x1 = (-b + Math.Sqrt(delta)) / (2 * a);
-            double x2 = (-b - Math.Sqrt(delta)) / (2 * a);
-            Console.WriteLine("Phương trình có 2 nghiệm:");
-            Console.WriteLine("x1 = " + x1);
-            Console.WriteLine("x2 = " + x2);
-        }
-    }
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public int Age { get; set; }
 }
-
-class Program
+public class Program
 {
-    static void Main(string[] args)
+    public static void Main(string[] args)
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
-
-        string tieptuc;
-
-        do
+        Console.InputEncoding = System.Text.Encoding.UTF8;
+        // nhập danh sách học sinh 
+        List<Student> students = new List<Student>()
         {
-            Console.Write("Nhập a: ");
-            double a = double.Parse(Console.ReadLine());
+            new Student { Id = 1, Name = "Anh", Age = 16 },
+            new Student { Id = 2, Name = "Binh", Age = 14 },
+            new Student { Id = 3, Name = "Cuong", Age = 17 },
+            new Student { Id = 4, Name = "Dung", Age = 19 },
+            new Student { Id = 5, Name = "An", Age = 15 },
+            new Student { Id = 6, Name = "Hoa", Age = 18 }
+        };
 
-            Console.Write("Nhập b: ");
-            double b = double.Parse(Console.ReadLine());
+        // a.in danh sách toàn bộ học sinh
+        Console.WriteLine("a. Danh sách toàn bộ học sinh:");
+        PrintStudents(students);
 
-            Console.Write("Nhập c: ");
-            double c = double.Parse(Console.ReadLine());
+        // b.tìm và in ra học sinh tuổi từ 15-18
+        Console.WriteLine("\nb. Học sinh tuổi từ 15-18:");
+        var studentsAge15to18 = students.Where(s => s.Age >= 15 && s.Age <= 18);
+        PrintStudents(studentsAge15to18);
 
-            PTBac2 pt = new PTBac2(a, b, c);
-            pt.Giai();
+        // c.tìm và in ra học sinh có tên bắt đầu bằng chữ "A"
+        Console.WriteLine("\nc. Học sinh có tên bắt đầu bằng chữ A:");
+        var studentsStartWithA = students.Where(s => s.Name.StartsWith("A", StringComparison.OrdinalIgnoreCase));
+        PrintStudents(studentsStartWithA);
 
-            Console.Write("\nBạn có muốn tiếp tục không? (y/n): ");
-            tieptuc = Console.ReadLine().ToLower();
+        // d.tính tổng tuổi của tất cả học sinh
+        int totalAge = students.Sum(s => s.Age);
+        Console.WriteLine($"\nd. Tổng số tuổi của tất cả học sinh: {totalAge}");
 
-            Console.WriteLine(); // xuống dòng cho đẹp
+        // e.tìm và in ra học sinh có tuổi lớn nhất
+        var oldestStudent = students.OrderByDescending(s => s.Age).FirstOrDefault();
+        if (oldestStudent != null)
+        {
+            Console.WriteLine("\ne. Học sinh có tuổi lớn nhất:");
+            Console.WriteLine($"  ID: {oldestStudent.Id}, Tên: {oldestStudent.Name}, Tuổi: {oldestStudent.Age}");
         }
-        while (tieptuc == "y");
 
-        Console.WriteLine("Chương trình kết thúc. Nhấn Enter để thoát.");
-        Console.ReadLine();
+        // f.sắp xếp danh sách học sinh theo tên tăng dần
+        Console.WriteLine("\nf. Danh sách học sinh tăng dần theo tên (A-Z):");
+        var sortedStudents = students.OrderBy(s => s.Name);
+        PrintStudents(sortedStudents);
+    }
+
+    // Hàm tiện ích để in danh sách học sinh
+    public static void PrintStudents(IEnumerable<Student> studentList)
+    {
+        foreach (var s in studentList)
+        {
+            Console.WriteLine($"  ID: {s.Id}, Ten: {s.Name}, Tuoi: {s.Age}");
+        }
     }
 }
